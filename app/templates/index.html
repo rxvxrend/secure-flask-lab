@@ -1,0 +1,10 @@
+<h1>Tasks</h1>
+
+<form method="POST" action="/tasks/add">
+    <input name="title">
+    <button type="submit">Add</button>
+</form>
+
+{% for task in tasks %}
+    <p>{{ task['title'] }}</p>
+{% endfor %}
