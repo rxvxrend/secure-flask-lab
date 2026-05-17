@@ -1,0 +1,111 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f3f4f6;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 700px;
+    margin: 30px auto;
+    padding: 0 15px;
+}
+
+.navbar {
+    background: white;
+    padding: 15px 20px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-links a {
+    margin-right: 15px;
+    color: #333;
+    font-weight: bold;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+textarea,
+input {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+textarea {
+    min-height: 100px;
+    resize: vertical;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+button {
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    margin-top: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    background: #1d4ed8;
+}
+
+.post-action {
+    margin-top: 10px;
+}
+
+.like-btn {
+    color: #e11d48;
+    font-weight: bold;
+}
+
+.comment {
+    margin-top: 12px;
+    padding-left: 12px;
+    border-left: 3px solid #ddd;
+}
+
+small {
+    color: gray;
+}
+
+a {
+    text-decoration: none;
+}
+
+.flash {
+    padding: 12px;
+    border-radius: 8px;
+    margin-top: 15px;
+    color: white;
+    font-weight: bold;
+}
+
+.flash.success {
+    background: #16a34a;
+}
+
+.flash.error {
+    background: #dc2626;
+}
