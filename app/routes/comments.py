@@ -1,4 +1,4 @@
-from flask import Blueprint, request, redirect, session, url_for
+from flask import Blueprint, request, session, jsonify
 from app.db import get_connection
 
 comments_bp = Blueprint("comments", __name__)
@@ -8,7 +8,7 @@ comments_bp = Blueprint("comments", __name__)
 def create_comment(post_id):
 
     if "user_id" not in session:
-        return redirect(url_for("auth.login"))
+        return jsonify({"error": "Unauthorized"}), 401
     
     content = request.form["content"]
 
@@ -23,6 +23,49 @@ def create_comment(post_id):
     )
 
     conn.commit()
+
+    comment = conn.execute(
+        """
+        SELECT comments.*, users.username
+        FROM comments
+        JOIN users ON comments.user_id = users.id
+        WHERE comments.id = last_insert_rowid()
+        """
+    ).fetchone()
+
     conn.close()
 
-    return redirect(url_for("posts.feed"))
+    return jsonify({
+        "username": comment["username"],
+        "content": comment["content"],
+        "created_at": comment["created_at"]
+    })
+
+@comments_bp.route("/more/<int:post_id>")
+def load_more_comments(post_id):
+
+    conn = get_connection()
+
+    offset = request.args.get("offset", 0, type=int)
+    limit = 5
+
+    comments = conn.execute("""
+        SELECT comments.*, users.username
+        FROM comments
+        JOIN users ON comments.user_id = users.id
+        WHERE comments.post_id = ?
+        ORDER BY comments.created_at DESC
+        LIMIT ? OFFSET ?
+    """, (post_id, limit, offset)).fetchall()
+
+    conn.close()
+
+    return jsonify([
+        {
+            "id": c["id"],
+            "username": c["username"],
+            "content": c["content"],
+            "created_at": c["created_at"]
+        }
+        for c in comments
+    ])

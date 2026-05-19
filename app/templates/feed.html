@@ -9,98 +9,107 @@ Feed
 <h1>Feed</h1>
 
 <div class="card">
-
     <form method="POST" action="/feed/create">
+
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
         <textarea
             name="content"
             placeholder="What's happening?"
             required
         ></textarea>
-
         <button type="submit">
             Post
         </button>
-
     </form>
-
 </div>
 
 {% for post in posts %}
 
-    <div class="card">
+<div class="card">
 
-        <b>{{ post.username }}</b>
+    <b>{{ post.username }}</b>
+    <p>{{ post.content }}</p>
+    <small>{{ post.created_at }}</small>
 
-        <p>{{ post.content }}</p>
+    <hr>
 
-        <small>{{ post.created_at }}</small>
+    <button
+        class="like-button"
+        data-post-id="{{ post.id }}"
+        data-liked="{{ post.liked_by_user }}"
+    >
+        {% if post.liked_by_user %}
+            💔 Unlike
+        {% else %}
+            ❤️ Like
+        {% endif %}
+    </button>
 
-        <hr>
+    <p>
+        Likes:
+        <span id="likes-count-{{ post.id }}">
+            {{ post.likes_count }}
+        </span>
+    </p>
 
-        <button
-            class="like-button"
-            data-post-id="{{ post.id }}"
-            data-liked="{{ post.liked_by_user }}"
+    <hr>
+
+    <form class="comment-form"
+        data-post-id="{{ post.id }}">
+        <input
+            name="content"
+            placeholder="Write comment"
+            required
         >
-            {% if post.liked_by_user %}
-                💔 Unlike
-            {% else %}
-                ❤️ Like
-            {% endif %}
+        <button type="submit">
+            Comment
         </button>
+    </form>
 
-        <p>
+    <div id="comments-container-{{ post.id }}">
 
-            Likes:
+        {% for comment in comments_map.get(post.id, [])[:5] %}
 
-            <span id="likes-count-{{ post.id }}">
-                {{ post.likes_count }}
-            </span>
-
-        </p>
-
-        <hr>
-
-        <form method="POST" action="/comments/create/{{ post.id }}">
-
-            <input
-                name="content"
-                placeholder="Write comment"
-                required
-            >
-
-            <button type="submit">
-                Comment
-            </button>
-
-        </form>
-
-        {% for comment in comments %}
-
-            {% if comment.post_id == post.id %}
-
-                <div style="
-                    margin-left:20px;
-                    margin-top:10px;
-                    border-left:2px solid gray;
-                    padding-left:10px;
-                ">
-
-                    <b>{{ comment.username }}</b>
-
-                    <p>{{ comment.content }}</p>
-
-                    <small>{{ comment.created_at }}</small>
-
-                </div>
-
-            {% endif %}
+            <div class="comment">
+                <b>{{ comment.username }}</b>
+                <p>{{ comment.content }}</p>
+                <small>{{ comment.created_at }}</small>
+            </div>
 
         {% endfor %}
 
     </div>
 
+    {% if comments_map.get(post.id, [])|length > 3 %}
+        <button class="show-more-comments"
+                data-post-id="{{ post.id }}"
+                data-offset="5">
+            Show more comments
+        </button>
+    {% endif %}
+
+</div>
+
 {% endfor %}
+
+<div style="display:flex; justify-content:space-between; margin-top:20px;">
+
+    {% if has_prev %}
+        <a href="/feed/?page={{ page - 1 }}">
+            ← Previous
+        </a>
+    {% else %}
+        <span></span>
+    {% endif %}
+
+    <span> Page {{ page }}</span>
+
+    {% if has_next %}
+        <a href="/feed/?page={{ page + 1}}">
+            Next →
+        </a>
+    {% endif %}
+</div>
 
 {% endblock %}

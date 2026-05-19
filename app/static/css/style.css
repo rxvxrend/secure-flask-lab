@@ -75,15 +75,24 @@ button:hover {
     margin-top: 10px;
 }
 
-.like-btn {
-    color: #e11d48;
-    font-weight: bold;
+.like-button {
+    background: #2563eb;
+    color: white;
 }
 
 .comment {
     margin-top: 12px;
+    margin-left: 20px;
     padding-left: 12px;
-    border-left: 3px solid #ddd;
+    border-left: 3px solid #d1d5db;
+    background: #f9fafb;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    border-radius: 6px;
+}
+
+.comment.hidden {
+    display: none;
 }
 
 small {
@@ -100,6 +109,8 @@ a {
     margin-top: 15px;
     color: white;
     font-weight: bold;
+    opacity: 1;
+    transition: opacity 0.5s ease;
 }
 
 .flash.success {
@@ -108,4 +119,8 @@ a {
 
 .flash.error {
     background: #dc2626;
+}
+
+.flash.hide {
+    opacity: 0;
 }

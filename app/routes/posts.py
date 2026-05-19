@@ -10,19 +10,31 @@ def feed():
     conn = get_connection()
     user_id = session.get("user_id")
 
+    page = request.args.get("page", 1, type=int)
+    per_page = 5
+    offset = (page - 1) * per_page
+
     posts_raw = conn.execute("""
         SELECT posts.*, users.username
         FROM posts
         JOIN users ON posts.user_id = users.id
         ORDER BY posts.created_at DESC
-    """).fetchall()
+        LIMIT ? OFFSET ?
+    """, (per_page, offset)).fetchall()
 
-    comments = conn.execute("""
+    total_posts = conn.execute("SELECT COUNT(*) as count FROM posts").fetchone()["count"]
+
+    comments_raw = conn.execute("""
         SELECT comments.*, users.username
         FROM comments
         JOIN users ON comments.user_id = users.id
         ORDER BY created_at DESC
     """).fetchall()
+
+    comments_map = {}
+
+    for c in comments_raw:
+        comments_map.setdefault(c["post_id"], []).append(dict(c))
 
     likes_raw = conn.execute("""
         SELECT post_id, COUNT(*) as count
@@ -38,7 +50,6 @@ def feed():
     posts = []
 
     for post in posts_raw:
-
         post_dict = dict(post)
 
         post_dict["likes_count"] = likes_map.get(post_dict["id"], 0)
@@ -63,7 +74,10 @@ def feed():
     return render_template(
         "feed.html",
         posts=posts,
-        comments=comments
+        comments_map=comments_map,
+        page=page,
+        has_next=(page * per_page < total_posts),
+        has_prev=(page > 1)
     )
 
 @posts_bp.route("/create", methods=["POST"])
