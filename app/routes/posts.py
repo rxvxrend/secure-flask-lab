@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session
 from app.db import get_connection
+from app import limiter
 
 posts_bp = Blueprint("posts", __name__)
 
@@ -81,6 +82,7 @@ def feed():
     )
 
 @posts_bp.route("/create", methods=["POST"])
+@limiter.limit("5 per minute")
 def create_post():
     if "user_id" not in session:
         return redirect(url_for("auth.login"))

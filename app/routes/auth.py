@@ -2,11 +2,13 @@ from flask import Blueprint, render_template, request, redirect, session, url_fo
 import bcrypt
 import sqlite3
 from app.db import get_connection
+from app import limiter
 
 auth_bp = Blueprint("auth", __name__)
 
 
 @auth_bp.route("/register", methods=["GET", "POST"])
+@limiter.limit("5 per minute")
 def register():
     if request.method == "POST":
 
@@ -45,6 +47,7 @@ def register():
     return render_template("auth/register.html")
 
 @auth_bp.route("/login", methods=["GET", "POST"])
+@limiter.limit("5 per minute")
 def login():
     if request.method == "POST":
         username = request.form["username"]

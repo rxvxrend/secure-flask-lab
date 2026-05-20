@@ -1,10 +1,12 @@
-from flask import Blueprint, redirect, session, url_for, jsonify
+from flask import Blueprint, session, jsonify
 from app.db import get_connection
+from app import limiter
 
 interaction_bp = Blueprint("interactions", __name__)
 
 
 @interaction_bp.route("/like/<int:post_id>", methods=["POST"])
+@limiter.limit("30 per minute")
 def like_post(post_id):
 
     if "user_id" not in session:

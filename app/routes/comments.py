@@ -1,10 +1,12 @@
 from flask import Blueprint, request, session, jsonify
 from app.db import get_connection
+from app import limiter
 
 comments_bp = Blueprint("comments", __name__)
 
 
 @comments_bp.route("/create/<int:post_id>", methods=["POST"])
+@limiter.limit("10 per minute")
 def create_comment(post_id):
 
     if "user_id" not in session:
