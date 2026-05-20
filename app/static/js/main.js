@@ -17,6 +17,20 @@ likeButtons.forEach(button => {
             }
         });
 
+        if (!response.ok) {
+            let errorMsg = "Error";
+
+            try {
+                const err = await response.json();
+                errorMsg = err.error || errorMsg;
+            } catch (e) {
+                errorMsg = "Too many requests";
+            }
+
+            showToast(errorMsg);
+            return;
+        }
+
         const data = await response.json();
 
         document.getElementById(
@@ -53,6 +67,19 @@ setTimeout(() => {
 
 }, 3000);
 
+function showToast(message) {
+    const toast = document.createElement("div");
+    toast.className = "flash error";
+    toast.innerText = message;
+
+    document.getElementById("toast-container").appendChild(toast);
+
+    setTimeout(() => {
+        toast.classList.add("hide");
+        setTimeout(() => toast.remove(), 500);
+    }, 3000);
+}
+
 document.querySelectorAll(".comment-form").forEach(form => {
 
     form.addEventListener("submit", async (e) => {
@@ -85,6 +112,11 @@ document.querySelectorAll(".comment-form").forEach(form => {
 
         const data = await response.json();
 
+        if (!response.ok) {
+            showToast(data.error || "Error");
+            return;
+        }
+
         const commentsContainer = 
             document.querySelector(`#comments-container-${postId}`);
 
@@ -110,7 +142,7 @@ document.querySelectorAll(".show-more-comments").forEach(button => {
     button.addEventListener("click", async () => {
 
         const postId = button.dataset.postId;
-        let offset = parseInt(button.dataset.offset);
+        let offset = parseInt(button.dataset.offset || "0");
 
         const response = await fetch(
             `/comments/more/${postId}?offset=${offset}`

@@ -12,7 +12,10 @@ def create_comment(post_id):
     if "user_id" not in session:
         return jsonify({"error": "Unauthorized"}), 401
     
-    content = request.form["content"]
+    content = request.form["content"].strip()
+
+    if len(content) < 1 or len(content) > 300:
+        return jsonify({"error": "Invalid length"}), 400
 
     conn = get_connection()
 

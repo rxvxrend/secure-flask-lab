@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from app.db import get_connection
 from app import limiter
 
@@ -87,7 +87,11 @@ def create_post():
     if "user_id" not in session:
         return redirect(url_for("auth.login"))
     
-    content = request.form["content"]
+    content = request.form["content"].strip()
+
+    if len(content) < 1 or len(content) > 500:
+        flash("Post must be 1-500 characters", "error")
+        return redirect(url_for("posts.feed"))
 
     conn = get_connection()
     conn.execute(

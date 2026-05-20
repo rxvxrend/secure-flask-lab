@@ -12,8 +12,16 @@ auth_bp = Blueprint("auth", __name__)
 def register():
     if request.method == "POST":
 
-        username = request.form["username"]
+        username = request.form["username"].strip()
         password = request.form["password"]
+
+        if len(username) < 3 or len(username) > 30:
+            flash("Username must be 3-30 characters", "error")
+            return redirect(url_for("auth.register"))
+        
+        if len(password) < 6 or len(password) > 100:
+            flash("Password must be 6-100 characters", "error")
+            return redirect(url_for("auth.register"))
 
         password_hash = bcrypt.hashpw(
             password.encode(),
@@ -32,7 +40,6 @@ def register():
                 (username, password_hash)
             )
             conn.commit()
-            conn.close()
 
             flash ("Account created successfully", "success")
             return redirect(url_for("auth.login"))
@@ -50,8 +57,12 @@ def register():
 @limiter.limit("5 per minute")
 def login():
     if request.method == "POST":
-        username = request.form["username"]
+        username = request.form["username"].strip()
         password = request.form["password"]
+
+        if not username or not password:
+            flash("Empty fields not allowed", "error")
+            return redirect(url_for("auth.login"))
 
         conn = get_connection()
         user = conn.execute(
