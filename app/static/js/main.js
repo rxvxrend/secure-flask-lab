@@ -159,11 +159,18 @@ document.querySelectorAll(".show-more-comments").forEach(button => {
             const div = document.createElement("div");
             div.classList.add("comment");
 
-            div.innerHTML = `
-                <b>${comment.username}</b>
-                <p>${comment.content}</p>
-                <small>${comment.created_at}</small>
-            `;
+            const b = document.createElement("b");
+            b.textContent = comment.username;
+
+            const p = document.createElement("p");
+            p.textContent = comment.content;
+
+            const small = document.createElement("small");
+            small.textContent = comment.created_at;
+
+            div.appendChild(b);
+            div.appendChild(p);
+            div.appendChild(small);
 
             container.appendChild(div);
         });
