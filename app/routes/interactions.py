@@ -14,6 +14,20 @@ def like_post(post_id):
     
     conn = get_connection()
 
+    post = conn.execute(
+        """
+        SELECT id FROM posts
+        WHERE id = ?
+        """,
+        (post_id,)
+    ).fetchone()
+
+    if not post:
+        conn.close()
+        return jsonify({
+            "error": "Post not found"
+        }), 404
+
     existing_like = conn.execute(
         """
         SELECT * FROM likes

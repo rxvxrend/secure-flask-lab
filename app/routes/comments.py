@@ -19,6 +19,20 @@ def create_comment(post_id):
 
     conn = get_connection()
 
+    post = conn.execute(
+        """
+        SELECT id FROM posts
+        WHERE id = ?
+        """,
+        (post_id,)
+    ).fetchone()
+
+    if not post:
+        conn.close()
+        return jsonify({
+            "error": "Post not found"
+        }), 404
+
     conn.execute(
         """
         INSERT INTO comments (post_id, user_id, content)

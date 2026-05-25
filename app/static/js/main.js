@@ -120,20 +120,25 @@ document.querySelectorAll(".comment-form").forEach(form => {
         const commentsContainer = 
             document.querySelector(`#comments-container-${postId}`);
 
-            const commentHTML = `
-                <div class="comment">
-                    <b>${data.username}</b>
-                    <p>${data.content}</p>
-                    <small>${data.created_at}</small>
-                </div>
-            `;
+        const div = document.createElement("div");
+        div.classList.add("comment");
+        
+        const b = document.createElement("b");
+        b.textContent = comment.username;
 
-            commentsContainer.insertAdjacentHTML(
-                "afterbegin",
-                commentHTML
-            );
+        const p = document.createElement("p");
+        p.textContent = comment.content;
 
-            input.value = "";
+        const small = document.createElement("small");
+        small.textContent = comment.created_at;
+
+        div.appendChild(b);
+        div.appendChild(p);
+        div.appendChild(small);
+
+        commentsContainer.prepend(div);
+
+        input.value = "";
     });
 });
 
