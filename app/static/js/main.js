@@ -124,13 +124,13 @@ document.querySelectorAll(".comment-form").forEach(form => {
         div.classList.add("comment");
         
         const b = document.createElement("b");
-        b.textContent = comment.username;
+        b.textContent = data.username;
 
         const p = document.createElement("p");
-        p.textContent = comment.content;
+        p.textContent = data.content;
 
         const small = document.createElement("small");
-        small.textContent = comment.created_at;
+        small.textContent = data.created_at;
 
         div.appendChild(b);
         div.appendChild(p);
